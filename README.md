@@ -134,19 +134,53 @@ call:run_c_code{
 
 ## 6. Export & Hugging Face Deployment
 
-You can publish the model in three formats:
+The fine-tuned model artifacts are published and available on Hugging Face:
 
-1. **LoRA Adapter**:
+| Artifact | Format | Precision / Quant | Hugging Face Repository |
+| :--- | :--- | :--- | :--- |
+| **LoRA Adapter** | PEFT / LoRA | 16-bit LoRA adapter weights | [`wxcdart/gemma4-e2b-unified-engine`](https://huggingface.co/wxcdart/gemma4-e2b-unified-engine) |
+| **Merged Standalone** | Safetensors | Full merged 16-bit weights | [`wxcdart/gemma4-e2b-unified-engine-safetensors`](https://huggingface.co/wxcdart/gemma4-e2b-unified-engine-safetensors) |
+| **GGUF Models** | GGUF | `q4_k_m`, `q8_0` | [`wxcdart/gemma4-e2b-unified-engine-gguf`](https://huggingface.co/wxcdart/gemma4-e2b-unified-engine-gguf) |
+
+### Exporting and Uploading Scripts
+
+1. **LoRA Adapter & Full Merged Safetensors**:
    ```bash
    python3 push_to_hf.py <HF_TOKEN>
    ```
-   Publishes adapter weights to `wxcdart/gemma4-e2b-unified-engine`.
 
-2. **Full Merged 16-bit Model (.safetensors)**:
-   Merges LoRA weights back into the 16-bit base model and pushes to `wxcdart/gemma4-e2b-unified-engine-safetensors`.
-
-3. **Quantized GGUF Models (`q4_k_m`, `q8_0`)**:
+2. **Quantized GGUF Models (`q4_k_m`, `q8_0`)**:
    ```bash
    python3 push_gguf_only.py <HF_TOKEN>
    ```
-   Pushes quantized GGUF models directly to `wxcdart/gemma4-e2b-unified-engine-gguf` for use with `llama.cpp` and Ollama.
+
+### Running with llama.cpp or Ollama
+
+Once the GGUF weights are downloaded:
+
+#### llama.cpp
+```bash
+./llama-cli \
+    -m gemma4-e2b-unified-engine-q4_k_m.gguf \
+    -p "<start_of_turn>user\nDiagnose race conditions in this POSIX thread code...<end_of_turn>\n<start_of_turn>model\n" \
+    -n 512
+```
+
+#### Ollama Modelfile
+```dockerfile
+FROM ./gemma4-e2b-unified-engine-q4_k_m.gguf
+TEMPLATE """{{ if .System }}<start_of_turn>system
+{{ .System }}<end_of_turn>
+{{ end }}{{ if .Prompt }}<start_of_turn>user
+{{ .Prompt }}<end_of_turn>
+{{ end }}<start_of_turn>model
+{{ .Response }}<end_of_turn>
+"""
+PARAMETER stop "<start_of_turn>"
+PARAMETER stop "<end_of_turn>"
+```
+Create and run the model:
+```bash
+ollama create gemma4-unified -f Modelfile
+ollama run gemma4-unified
+```
