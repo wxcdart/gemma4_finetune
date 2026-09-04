@@ -80,3 +80,5 @@ Thumbs.db
 .env.*
 *.token
 hf_token
+gemma4_e2b_unified_engine/
+gemma4_e2b_merged*/
