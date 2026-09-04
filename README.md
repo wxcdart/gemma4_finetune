@@ -104,8 +104,15 @@ Generate the seed unified dataset:
 python3 prepare_unified_tool_dataset.py
 ```
 This produces:
-- `unified_tool_calling_data.jsonl`: Formatted conversational turns for training.
+- `unified_tool_calling_data.jsonl`: Formatted conversational turns across C, DSP, and BusyBox.
 - `unified_tools_schema.json`: Standard JSON Schema definitions for tools (`busybox_exec`, `python_exec`, `c_compile_run`).
+
+### Python Tool Training Data Generator (`python_tool_training_data.jsonl`)
+Generate realistic, execution-verified Python tool calling data spanning DSP, Machine Learning, Deep Learning, Linear Algebra, Time Series, Async Concurrency, and Error Recovery:
+```bash
+python3 generate_python_training_data.py
+```
+This runs the Python code against the active Python environment to verify exit codes, capture true `stdout`/`stderr` outputs, and format multi-turn `<call:python_exec>` turns in `python_tool_training_data.jsonl`.
 
 ### Scaling to Production (2,000 – 10,000 Examples)
 

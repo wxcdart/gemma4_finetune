@@ -64,6 +64,8 @@ tensorboard/
 *.arrow
 *.parquet
 !seed_*.jsonl
+!python_tool_training_data.jsonl
+!unified_tool_calling_data.jsonl
 
 # OS and Editor artifacts
 .DS_Store
