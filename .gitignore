@@ -1,0 +1,82 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Training checkpoints, saved models, and adapter weights
+checkpoints*/
+gemma4_e2b_specialized/
+gemma4_e2b_specialized_busybox/
+gemma4_e2b_tool_calling/
+checkpoint-*/
+runs/
+*.pt
+*.pth
+*.bin
+*.safetensors
+*.onnx
+*.gguf
+
+# Unsloth / Hugging Face caches & compiled kernels
+unsloth_compiled_cache/
+.cache/
+huggingface/
+hf_cache/
+
+# Experiment tracking & loggers
+wandb/
+tensorboard/
+*.tfevents.*
+
+# Datasets and generated training artifacts
+*.jsonl
+*.arrow
+*.parquet
+!seed_*.jsonl
+
+# OS and Editor artifacts
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.ipynb_checkpoints/
+
+# Environment secrets / tokens
+.env
+.env.*
+*.token
+hf_token

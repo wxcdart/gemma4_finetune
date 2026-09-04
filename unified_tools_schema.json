@@ -1,0 +1,64 @@
+[
+  {
+    "type": "function",
+    "function": {
+      "name": "busybox_exec",
+      "description": "Executes a POSIX shell command in a BusyBox ash environment.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "command": {
+            "type": "string",
+            "description": "Shell command to run"
+          }
+        },
+        "required": [
+          "command"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "python_exec",
+      "description": "Executes a sandboxed Python script for ML/DL models, data processing, DSP analysis, or automation testing.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Python source code to execute"
+          }
+        },
+        "required": [
+          "code"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "c_compile_run",
+      "description": "Compiles and executes C code with gcc/clang, linking necessary libraries (-lpthread, -lm) and optional sanitizers.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "source_code": {
+            "type": "string",
+            "description": "Complete C source code"
+          },
+          "compiler_flags": {
+            "type": "string",
+            "description": "GCC flags e.g. '-O2 -pthread -fsanitize=address'",
+            "default": "-O2 -pthread"
+          }
+        },
+        "required": [
+          "source_code"
+        ]
+      }
+    }
+  }
+]
