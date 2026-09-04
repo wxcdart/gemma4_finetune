@@ -85,17 +85,39 @@ export HF_TOKEN="hf_your_token_here"
 
 ---
 
-## 3. Dataset Preparation
+## 3. Dataset Architecture & Scaling Roadmap
 
-The training datasets support tool calling, multi-step thought reasoning (`<thought> ... </thought>`), and executable tool invocations (`call:tool_name{...}`).
+### Current Dataset Overview (Proof-of-Concept Scaffold)
+The repository currently includes a curated, high-signal seed dataset in [`prepare_unified_tool_dataset.py`](prepare_unified_tool_dataset.py) (`unified_tool_calling_data.jsonl`).
 
-Generate the unified dataset:
+> [!NOTE]
+> **Dataset Status & Sparsity Notice**:
+> The seed dataset is intentionally lightweight (3 multi-turn conversations) designed to serve as a **structural format-adaptation scaffold** rather than a full pretraining corpus. It verifies that Gemma 4 E2B can learn the exact token syntax (`<thought>`, `<call:tool_name>`, `<response:tool_name>`), converge with Unsloth QLoRA, and cleanly export to Safetensors and GGUF without corruption.
+
+Generate the seed unified dataset:
 ```bash
 python3 prepare_unified_tool_dataset.py
 ```
-This generates:
+This produces:
 - `unified_tool_calling_data.jsonl`: Formatted conversational turns for training.
-- `unified_tools_schema.json`: The standard JSON Schema specifications for the available tools (`run_c_code`, `execute_busybox_command`, `design_dsp_filter`).
+- `unified_tools_schema.json`: Standard JSON Schema definitions for tools (`busybox_exec`, `python_exec`, `c_compile_run`).
+
+### Scaling to Production (2,000 – 10,000 Examples)
+
+For production deployment and generalized zero-shot tool usage, the dataset should be scaled to a minimum of **2,000 to 5,000 examples** across the following distribution:
+
+| Category | Recommended Volume | Role & Objective |
+| :--- | :--- | :--- |
+| **Multi-Turn Tool Loops** | 1,500 – 2,500 | Multi-step agent trajectories (e.g. compile C code $\rightarrow$ analyze sanitizer output $\rightarrow$ apply fix). |
+| **Error Recovery & Diagnostics** | 800 – 1,200 | Teaches the model to handle compilation errors, runtime exceptions, and non-zero exit codes. |
+| **Direct Answers (No Tool)** | 1,000 – 1,500 | Teaches the model *when not to invoke a tool* for standard conversational or conceptual queries. |
+| **Safety & Command Rejections** | 300 – 500 | Rejects destructive commands (`rm -rf /`, dangerous fork bombs, raw block device writes). |
+| **Cross-Domain Coverage** | 1,500+ | Balanced coverage across C/TSan, Python ML/DSP, container shell commands, and distributed pipelines. |
+
+#### Data Acquisition Strategies:
+1. **Synthetic Generation via Frontier Models**: Automated prompt-driven generation of multi-turn tool calling traces adhering to [`unified_tools_schema.json`](unified_tools_schema.json).
+2. **Open-Source Dataset Adaptation**: Converting and filtering programming/system subsets from **Glaive Function Calling v2** and **ToolBench** into Gemma 4's native `<start_of_turn>` and `<call:...>` tokens.
+3. **Execution-Validated Self-Play**: Running generated Python, C, and Shell code in isolated sandboxes to capture authentic stdout/stderr responses.
 
 ---
 
