@@ -66,6 +66,11 @@ pip install "transformers>=5.0.0" trl peft accelerate bitsandbytes datasets xfor
 
 # 3. Install domain tool & validation libraries
 pip install scipy numpy librosa scikit-learn pydantic huggingface_hub
+
+# 4. torchao version notes:
+# - During fine-tuning/training: a lower version (e.g. torchao==0.7.0) is typically used for PyTorch 2.6.0 stability.
+# - During GGUF export / quantization: Unsloth and unsloth_zoo require torchao > 0.7 (recommended: torchao==0.9.0):
+pip install torchao==0.9.0
 ```
 
 ### Hugging Face Authentication
